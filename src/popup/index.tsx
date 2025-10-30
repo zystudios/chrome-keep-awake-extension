@@ -27,6 +27,8 @@ function IndexPopup() {
 
   const [loading, setLoading] = useState(false);
   const [awake, setAwake] = useState(false);
+  const [closeAutoTime, setCloseAutoTime] = useState(0);
+  const [countDownSelect, setCountDownSelect] = useState(0);
   const [bg, setBg] = useState<any>("");
   const [messageApi, contextHolder] = message.useMessage({
     top: "60px",
@@ -37,10 +39,25 @@ function IndexPopup() {
     const init = async () => {
       try {
         const status: string = (await storage.getItem("awake")) || "0";
+        const disable: string = (await storage.getItem("disable")) || "0";
+        setCountDownSelect(Number(disable));
         setAwake(status == "1" ? true : false);
         status == "1"
           ? chrome.power.requestKeepAwake("display")
           : chrome.power.releaseKeepAwake();
+
+        chrome.runtime.onMessage.addListener(
+          function (request, sender, sendResponse) {
+            if (request.type === "count_down") {
+              setCloseAutoTime(request.value);
+              if (request.value == 0) {
+                chrome.power.releaseKeepAwake();
+                setCountDownSelect(0);
+                setAwake(false);
+              }
+            }
+          }
+        );
       } catch {}
     };
     init();
@@ -58,6 +75,24 @@ function IndexPopup() {
             radial-gradient(at ${randomNum(70, 100)}% ${randomNum(30, 80)}%, hsla(112, 100%, ${randomNum(70, 100)}%, 0.1) 0, hsla(112, 100%, 100%, 0) 40%)
             `;
   };
+
+  const convertSeconds = (seconds: number) => {
+    if (isNaN(seconds) || seconds <= 0) {
+      return "00:00:00";
+    }
+    let hours = Math.floor(seconds / 3600);
+    let minutes = Math.floor((seconds % 3600) / 60);
+    let remainingSeconds = seconds % 60;
+
+    return (
+      (hours < 10 ? "0" + hours : hours) +
+      ":" +
+      (minutes < 10 ? "0" + minutes : minutes) +
+      ":" +
+      (remainingSeconds < 10 ? "0" + remainingSeconds : remainingSeconds)
+    );
+  };
+
   return (
     <div className="layout">
       <Spin fullscreen spinning={loading} size="large"></Spin>
@@ -110,6 +145,7 @@ function IndexPopup() {
                 } else {
                   chrome.power.releaseKeepAwake();
                   await storage.setItem("awake", 0);
+                  setCloseAutoTime(0);
                 }
                 setAwake(v);
               }}
@@ -130,7 +166,7 @@ function IndexPopup() {
             <Select
               size="small"
               listHeight={130}
-              defaultValue={0}
+              value={countDownSelect}
               style={{ width: 80 }}
               options={[
                 { label: "OFF", value: 0 },
@@ -152,6 +188,18 @@ function IndexPopup() {
                 { label: "11 h", value: 660 },
                 { label: "12 h", value: 720 },
               ]}
+              onChange={async (e) => {
+                setCountDownSelect(e);
+                if (e == 0) {
+                  setCloseAutoTime(0);
+                }
+                if (awake == true) {
+                  await storage.setItem("disable", e);
+                  chrome.runtime.sendMessage({
+                    type: "reset_time",
+                  });
+                }
+              }}
             ></Select>
           </div>
           <Alert
@@ -167,7 +215,12 @@ function IndexPopup() {
         className="footer"
         style={{ display: "flex", justifyContent: "space-between" }}
       >
-        <div>Disable In: {"00:00:00"}</div>
+        <div>
+          Disable In:{" "}
+          <span style={{ color: "#1677ff" }}>
+            {closeAutoTime == 0 ? "OFF" : convertSeconds(closeAutoTime)}
+          </span>
+        </div>
         <div>Ver: {appVerion}</div>
       </div>
 
