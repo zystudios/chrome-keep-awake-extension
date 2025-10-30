@@ -1,8 +1,8 @@
 {
-  "name": "demo-extension",
-  "displayName": "Demo",
+  "name": "keep-awake-extension",
+  "displayName": "Keep Awake",
   "version": "1.0.0",
-  "description": "DEMO",
+  "description": "Keeping the screen awake will prevent the computer from turning off or going to sleep.",
   "author": "zystudios",
   "scripts": {
     "dev": "plasmo dev",
@@ -31,14 +31,8 @@
     "typescript": "5.9.2"
   },
   "manifest": {
-    "host_permissions": [
-      "<all_urls>",
-      "http://*/*",
-      "https://*/*"
-    ],
     "permissions": [
-      "storage",
-      "unlimitedStorage"
+      "storage"
     ]
   }
 }
