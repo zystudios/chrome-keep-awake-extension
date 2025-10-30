@@ -7,4 +7,4 @@
  * @Description:
  */
 
-export const appVerion = "1.0"
+export const appVerion = "1.0.0";
