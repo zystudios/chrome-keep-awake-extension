@@ -158,7 +158,9 @@ function IndexPopup() {
                 } else {
                   chrome.power.releaseKeepAwake();
                   await storage.setItem("awake", 0);
+                  await storage.setItem("disable", 0);
                   setCloseAutoTime(0);
+                  setCountDownSelect(0);
                   await iconTxt(false);
                 }
                 setAwake(v);
