@@ -7,21 +7,10 @@
  * @Description:
  */
 
-import {
-  Alert,
-  Avatar,
-  Button,
-  ConfigProvider,
-  message,
-  Select,
-  Spin,
-  Switch,
-} from "antd";
+import { Alert, ConfigProvider, message, Select, Spin, Switch } from "antd";
 import { useEffect, useState } from "react";
 
 import "./index.less";
-
-import { SettingOutlined, SyncOutlined } from "@ant-design/icons";
 
 import { Storage } from "@plasmohq/storage";
 import { appVerion } from "~config";
@@ -47,6 +36,11 @@ function IndexPopup() {
     setBg(generateBg());
     const init = async () => {
       try {
+        const status: string = (await storage.getItem("awake")) || "0";
+        setAwake(status == "1" ? true : false);
+        status == "1"
+          ? chrome.power.requestKeepAwake("display")
+          : chrome.power.releaseKeepAwake();
       } catch {}
     };
     init();
@@ -109,7 +103,14 @@ function IndexPopup() {
           >
             <Switch
               value={awake}
-              onChange={(v) => {
+              onChange={async (v) => {
+                if (v) {
+                  chrome.power.requestKeepAwake("display");
+                  await storage.setItem("awake", 1);
+                } else {
+                  chrome.power.releaseKeepAwake();
+                  await storage.setItem("awake", 0);
+                }
                 setAwake(v);
               }}
             ></Switch>
@@ -125,7 +126,7 @@ function IndexPopup() {
             {awake ? "Keep Awake Enabled" : "Keep Awake Disabled"}
           </div>
           <div style={{ marginTop: 10, fontSize: 14 }}>
-            Disable After{" "}
+            Disable In{" "}
             <Select
               size="small"
               listHeight={130}
@@ -166,7 +167,7 @@ function IndexPopup() {
         className="footer"
         style={{ display: "flex", justifyContent: "space-between" }}
       >
-        <div>Disable: {"00:00:00"}</div>
+        <div>Disable In: {"00:00:00"}</div>
         <div>Ver: {appVerion}</div>
       </div>
 
