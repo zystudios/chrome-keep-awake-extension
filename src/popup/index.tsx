@@ -155,7 +155,7 @@ function IndexPopup() {
             style={{
               fontSize: 14,
               fontWeight: 600,
-              marginTop: 20,
+              marginTop: 10,
               color: awake ? "#1abb6b" : "#ff4c50",
             }}
           >
