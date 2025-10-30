@@ -34,6 +34,14 @@ function IndexPopup() {
     top: "60px",
     duration: 2,
   });
+
+  const iconTxt = async (status: boolean) => {
+    await chrome.action.setBadgeTextColor({ color: "#000000" });
+    await chrome.action.setBadgeText({ text: status ? "ON" : "" });
+    await chrome.action.setBadgeBackgroundColor({
+      color: "#1abb6b",
+    });
+  };
   useEffect(() => {
     setBg(generateBg());
     const init = async () => {
@@ -42,9 +50,13 @@ function IndexPopup() {
         const disable: string = (await storage.getItem("disable")) || "0";
         setCountDownSelect(Number(disable));
         setAwake(status == "1" ? true : false);
-        status == "1"
-          ? chrome.power.requestKeepAwake("display")
-          : chrome.power.releaseKeepAwake();
+        if (status == "1") {
+          chrome.power.requestKeepAwake("display");
+          await iconTxt(true);
+        } else {
+          chrome.power.releaseKeepAwake();
+          await iconTxt(false);
+        }
 
         chrome.runtime.onMessage.addListener(
           function (request, sender, sendResponse) {
@@ -142,10 +154,12 @@ function IndexPopup() {
                 if (v) {
                   chrome.power.requestKeepAwake("display");
                   await storage.setItem("awake", 1);
+                  await iconTxt(true);
                 } else {
                   chrome.power.releaseKeepAwake();
                   await storage.setItem("awake", 0);
                   setCloseAutoTime(0);
+                  await iconTxt(false);
                 }
                 setAwake(v);
               }}
