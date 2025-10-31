@@ -153,6 +153,8 @@ function IndexPopup() {
               onChange={async (v) => {
                 if (v) {
                   chrome.power.requestKeepAwake("display");
+                  setCountDownSelect(0);
+                  await storage.setItem("disable", 0);
                   await storage.setItem("awake", 1);
                   await iconTxt(true);
                 } else {
