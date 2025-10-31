@@ -123,11 +123,11 @@ function IndexPopup() {
             justifyContent: "center",
           }}
         >
-          <img width={36} src={require("data-base64:../../assets/icon.png")} />
+          <img width={36} src={require("data-base64:../../assets/logo.png")} />
           <span
             style={{
               textAlign: "center",
-              marginLeft: 5,
+              marginLeft: 20,
               backgroundImage: "linear-gradient(to right, #0090ff, #ff65ff)",
               color: "transparent",
               WebkitBackgroundClip: "text",
