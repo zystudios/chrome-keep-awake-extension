@@ -1,9 +1,9 @@
 /*
  * @Author: zhangyan
  * @Date: 2025-08-23 20:35:53
- * @LastEditTime: 2025-09-08 23:24:55
+ * @LastEditTime: 2025-10-31 21:12:49
  * @LastEditors: zhangyan
- * @FilePath: /demo-extension/src/popup/popup.tsx
+ * @FilePath: /chrome-keep-awake-extension/src/popup/index.tsx
  * @Description:
  */
 

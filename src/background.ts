@@ -1,9 +1,9 @@
 /*
  * @Author: zhangyan
  * @Date: 2023-11-15 19:48:54
- * @LastEditTime: 2024-11-20 19:55:16
+ * @LastEditTime: 2025-10-31 21:12:31
  * @LastEditors: zhangyan
- * @FilePath: /website-cookie-sync-extension/src/background.ts
+ * @FilePath: /chrome-keep-awake-extension/src/background.ts
  * @Description:
  */
 

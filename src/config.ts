@@ -1,9 +1,9 @@
 /*
  * @Author: zhangyan
  * @Date: 2025-09-08 23:12:52
- * @LastEditTime: 2025-09-08 23:13:05
+ * @LastEditTime: 2025-10-31 21:12:42
  * @LastEditors: zhangyan
- * @FilePath: /demo-extension/src/config.ts
+ * @FilePath: /chrome-keep-awake-extension/src/config.ts
  * @Description:
  */
 
