@@ -131,7 +131,7 @@ function IndexPopup() {
               backgroundImage: "linear-gradient(to right, #0090ff, #ff65ff)",
               color: "transparent",
               WebkitBackgroundClip: "text",
-              fontWeight: 600,
+              fontWeight: 700,
               fontSize: 20,
             }}
           >
