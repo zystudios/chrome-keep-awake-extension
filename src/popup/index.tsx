@@ -127,7 +127,7 @@ function IndexPopup() {
           <span
             style={{
               textAlign: "center",
-              marginLeft: 20,
+              marginLeft: 10,
               backgroundImage: "linear-gradient(to right, #0090ff, #ff65ff)",
               color: "transparent",
               WebkitBackgroundClip: "text",
