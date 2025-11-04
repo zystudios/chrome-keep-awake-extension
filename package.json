@@ -1,7 +1,7 @@
 {
   "name": "keep-awake-extension",
   "displayName": "Keep Awake",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Keeping the screen awake will prevent the computer from turning off or going to sleep.",
   "author": "zystudios",
   "scripts": {
