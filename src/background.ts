@@ -26,6 +26,19 @@ if (process.env.NODE_ENV == "production") {
 keepAlive();
 let loop_count = 0;
 
+const showIcon = async () => {
+  const awake = (await storage.get("awake")) || "0";
+  if (awake == "1") {
+    await chrome.action.setBadgeTextColor({ color: "#000000" });
+    await chrome.action.setBadgeText({ text: "ON" });
+    await chrome.action.setBadgeBackgroundColor({
+      color: "#1abb6b",
+    });
+  }
+};
+
+showIcon();
+
 setInterval(async () => {
   try {
     const awake = (await storage.get("awake")) || "0";
