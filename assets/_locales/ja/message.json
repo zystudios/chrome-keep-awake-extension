@@ -1,0 +1,8 @@
+{
+  "extName": {
+    "message": "Keep Awake"
+  },
+  "extDesc": {
+    "message": "画面の常時点灯を維持し、コンピューターのシャットダウンやスリープを防止します"
+  }
+}
