@@ -11,5 +11,5 @@
   "alertMessage": {
     "message": "保持屏幕常亮将防止计算机关闭、锁定或进入睡眠状态。"
   },
-  "footerDisableIn": { "message": "倒计时:" }
+  "footerDisableIn": { "message": "定时关闭:" }
 }

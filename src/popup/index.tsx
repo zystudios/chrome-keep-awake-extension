@@ -1,7 +1,7 @@
 /*
  * @Author: zhangyan
  * @Date: 2025-08-23 20:35:53
- * @LastEditTime: 2026-06-30 22:06:05
+ * @LastEditTime: 2026-06-30 22:32:44
  * @LastEditors: zhangyan
  * @FilePath: /chrome-keep-awake-extension/src/popup/index.tsx
  * @Description:
@@ -14,6 +14,7 @@ import "./index.less";
 
 import { Storage } from "@plasmohq/storage";
 import { appVerion } from "~config";
+import { ClockCircleOutlined } from "@ant-design/icons";
 
 const storage = new Storage({ area: "local" });
 
@@ -268,7 +269,7 @@ function IndexPopup() {
         style={{ display: "flex", justifyContent: "space-between" }}
       >
         <div>
-          {chrome.i18n.getMessage("footerDisableIn")}{" "}
+          <ClockCircleOutlined />{" "}
           <span style={{ color: "#1677ff" }}>
             {closeAutoTime == 0 ? "OFF" : convertSeconds(closeAutoTime)}
           </span>
