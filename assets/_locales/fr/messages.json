@@ -4,5 +4,12 @@
   },
   "extDesc": {
     "message": "Maintenir l'écran éveillé empêche l'ordinateur de s'éteindre ou de se mettre en veille"
-  }
+  },
+  "enabled": { "message": "Keep Awake Activé" },
+  "disabled": { "message": "Keep Awake Désactivé" },
+  "disableIn": { "message": "Désactiver dans" },
+  "alertMessage": {
+    "message": "Le fait de garder l'écran éveillé empêchera l'ordinateur de s'éteindre ou de se mettre en veille."
+  },
+  "footerDisableIn": { "message": "Désactiver dans:" }
 }

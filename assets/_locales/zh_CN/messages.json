@@ -4,5 +4,12 @@
   },
   "extDesc": {
     "message": "保持屏幕常亮，防止电脑自动息屏或进入休眠模式"
-  }
+  },
+  "enabled": { "message": "已启用防止休眠" },
+  "disabled": { "message": "已禁用防止休眠" },
+  "disableIn": { "message": "定时关闭" },
+  "alertMessage": {
+    "message": "保持屏幕常亮将防止计算机关闭、锁定或进入睡眠状态。"
+  },
+  "footerDisableIn": { "message": "倒计时:" }
 }

@@ -1,7 +1,7 @@
 /*
  * @Author: zhangyan
  * @Date: 2025-08-23 20:35:53
- * @LastEditTime: 2026-06-30 21:04:03
+ * @LastEditTime: 2026-06-30 22:06:05
  * @LastEditors: zhangyan
  * @FilePath: /chrome-keep-awake-extension/src/popup/index.tsx
  * @Description:
@@ -156,7 +156,7 @@ function IndexPopup() {
         </div>
 
         <></>
-        <div style={{ textAlign: "center", marginTop: 20 }}>
+        <div style={{ textAlign: "center", marginTop: 10 }}>
           <ConfigProvider
             theme={{
               token: {
@@ -201,22 +201,24 @@ function IndexPopup() {
               color: awake ? "#1abb6b" : "#ff4c50",
             }}
           >
-            {awake ? "Keep Awake Enabled" : "Keep Awake Disabled"}
+            {awake
+              ? chrome.i18n.getMessage("enabled")
+              : chrome.i18n.getMessage("disabled")}
           </div>
           <div style={{ marginTop: 10, fontSize: 14 }}>
-            Disable In{" "}
+            {chrome.i18n.getMessage("disableIn")}{" "}
             <Select
               size="small"
               listHeight={130}
               value={countDownSelect}
-              style={{ width: 80 }}
+              style={{ width: 90 }}
               options={[
                 { label: "OFF", value: 0 },
-                { label: "10 m", value: 10 },
-                { label: "20 m", value: 20 },
-                { label: "30 m", value: 30 },
-                { label: "40 m", value: 40 },
-                { label: "50 m", value: 50 },
+                { label: "10 min", value: 10 },
+                { label: "20 min", value: 20 },
+                { label: "30 min", value: 30 },
+                { label: "40 min", value: 40 },
+                { label: "50 min", value: 50 },
                 { label: "1 h", value: 60 },
                 { label: "2 h", value: 120 },
                 { label: "3 h", value: 180 },
@@ -247,12 +249,18 @@ function IndexPopup() {
             ></Select>
           </div>
           <Alert
-            style={{ marginTop: 20 }}
+            style={{
+              marginTop: 10,
+              marginBottom: 30,
+              textAlign: "left", // 提示文字靠左对齐，阅读长句时比居中更舒服
+              padding: "8px 12px", // 缩小 Alert 的内边距，挤出更多垂直空间
+              wordBreak: "break-word", // 确保长单词或某些语言（如德语、俄语）能完美折行
+              maxHeight: 160,
+              overflowY: "auto",
+            }}
             type="info"
-            message={
-              "Keeping the screen awake will prevent the computer from turning off or going to sleep."
-            }
-          ></Alert>
+            message={chrome.i18n.getMessage("alertMessage")}
+          />
         </div>
       </div>
       <div
@@ -260,12 +268,12 @@ function IndexPopup() {
         style={{ display: "flex", justifyContent: "space-between" }}
       >
         <div>
-          Disable In:{" "}
+          {chrome.i18n.getMessage("footerDisableIn")}{" "}
           <span style={{ color: "#1677ff" }}>
             {closeAutoTime == 0 ? "OFF" : convertSeconds(closeAutoTime)}
           </span>
         </div>
-        <div>Ver: {appVerion}</div>
+        <div>v{appVerion}</div>
       </div>
 
       {contextHolder}

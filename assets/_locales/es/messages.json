@@ -4,5 +4,12 @@
   },
   "extDesc": {
     "message": "Mantén tu pantalla activa y evita que el equipo se apague o entre en modo de suspensión automáticamente"
-  }
+  },
+  "enabled": { "message": "Keep Awake Activado" },
+  "disabled": { "message": "Keep Awake Desactivado" },
+  "disableIn": { "message": "Desactivar en" },
+  "alertMessage": {
+    "message": "Mantener la pantalla encendida evitará que el equipo se apague o entre en estado de suspensión."
+  },
+  "footerDisableIn": { "message": "Desactivar en:" }
 }
