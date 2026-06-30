@@ -1,7 +1,7 @@
 /*
  * @Author: zhangyan
  * @Date: 2025-08-23 20:35:53
- * @LastEditTime: 2026-06-30 23:19:10
+ * @LastEditTime: 2026-06-30 23:21:09
  * @LastEditors: zhangyan
  * @FilePath: /chrome-keep-awake-extension/src/popup/index.tsx
  * @Description:
@@ -274,7 +274,7 @@ function IndexPopup() {
           </div>
           <Alert
             style={{
-              margin: "20px 10px 40px 10px",
+              margin: "20px 5px 40px 5px",
 
               textAlign: "left", // 提示文字靠左对齐，阅读长句时比居中更舒服
               padding: "8px 12px", // 缩小 Alert 的内边距，挤出更多垂直空间
