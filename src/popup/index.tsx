@@ -1,7 +1,7 @@
 /*
  * @Author: zhangyan
  * @Date: 2025-08-23 20:35:53
- * @LastEditTime: 2025-10-31 21:12:49
+ * @LastEditTime: 2026-06-30 21:04:03
  * @LastEditors: zhangyan
  * @FilePath: /chrome-keep-awake-extension/src/popup/index.tsx
  * @Description:
@@ -26,9 +26,16 @@ function IndexPopup() {
   }
 
   const [loading, setLoading] = useState(false);
-  const [awake, setAwake] = useState(false);
+
+  // 1. 【核心修改点】直接在 useState 里面通过同步的 localStorage 读取初始值，彻底杜绝闪烁和滑动动画
+  const [awake, setAwake] = useState(() => {
+    return localStorage.getItem("sync_awake") === "1";
+  });
+  const [countDownSelect, setCountDownSelect] = useState(() => {
+    return Number(localStorage.getItem("sync_disable")) || 0;
+  });
+
   const [closeAutoTime, setCloseAutoTime] = useState(0);
-  const [countDownSelect, setCountDownSelect] = useState(0);
   const [bg, setBg] = useState<any>("");
   const [messageApi, contextHolder] = message.useMessage({
     top: "60px",
@@ -42,12 +49,18 @@ function IndexPopup() {
       color: "#1abb6b",
     });
   };
+
   useEffect(() => {
     setBg(generateBg());
     const init = async () => {
       try {
         const status: string = (await storage.getItem("awake")) || "0";
         const disable: string = (await storage.getItem("disable")) || "0";
+
+        // 2. 【核心修改点】后台异步数据返回后，同步更新到 localStorage 镜像中
+        localStorage.setItem("sync_awake", status);
+        localStorage.setItem("sync_disable", disable);
+
         setCountDownSelect(Number(disable));
         setAwake(status == "1" ? true : false);
         if (status == "1") {
@@ -64,6 +77,9 @@ function IndexPopup() {
               setCloseAutoTime(request.value);
               if (request.value == 0) {
                 chrome.power.releaseKeepAwake();
+                // 3. 【核心修改点】监听到倒计时结束，同步更新 localStorage 状态
+                localStorage.setItem("sync_awake", "0");
+                localStorage.setItem("sync_disable", "0");
                 setCountDownSelect(0);
                 setAwake(false);
               }
@@ -152,12 +168,20 @@ function IndexPopup() {
               value={awake}
               onChange={async (v) => {
                 if (v) {
+                  // 4. 【核心修改点】手动切换时，同步写入 localStorage
+                  localStorage.setItem("sync_awake", "1");
+                  localStorage.setItem("sync_disable", "0");
+
                   chrome.power.requestKeepAwake("display");
                   setCountDownSelect(0);
                   await storage.setItem("disable", 0);
                   await storage.setItem("awake", 1);
                   await iconTxt(true);
                 } else {
+                  // 5. 【核心修改点】手动切换时，同步写入 localStorage
+                  localStorage.setItem("sync_awake", "0");
+                  localStorage.setItem("sync_disable", "0");
+
                   chrome.power.releaseKeepAwake();
                   await storage.setItem("awake", 0);
                   await storage.setItem("disable", 0);
@@ -208,6 +232,8 @@ function IndexPopup() {
               ]}
               onChange={async (e) => {
                 setCountDownSelect(e);
+                // 6. 【核心修改点】下拉框更改时同步到 localStorage
+                localStorage.setItem("sync_disable", String(e));
                 if (e == 0) {
                   setCloseAutoTime(0);
                 }
