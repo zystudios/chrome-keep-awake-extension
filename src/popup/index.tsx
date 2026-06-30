@@ -1,7 +1,7 @@
 /*
  * @Author: zhangyan
  * @Date: 2025-08-23 20:35:53
- * @LastEditTime: 2026-06-30 22:32:44
+ * @LastEditTime: 2026-06-30 22:35:33
  * @LastEditors: zhangyan
  * @FilePath: /chrome-keep-awake-extension/src/popup/index.tsx
  * @Description:
@@ -36,7 +36,11 @@ function IndexPopup() {
     return Number(localStorage.getItem("sync_disable")) || 0;
   });
 
-  const [closeAutoTime, setCloseAutoTime] = useState(0);
+  // 【优化点】同步读取上次记录的倒计时剩余时间，防止底部闪烁 "OFF"
+  const [closeAutoTime, setCloseAutoTime] = useState(() => {
+    return Number(localStorage.getItem("sync_close_auto_time")) || 0;
+  });
+
   const [bg, setBg] = useState<any>("");
   const [messageApi, contextHolder] = message.useMessage({
     top: "60px",
@@ -76,11 +80,18 @@ function IndexPopup() {
           function (request, sender, sendResponse) {
             if (request.type === "count_down") {
               setCloseAutoTime(request.value);
+              // 【优化点】监听到后台倒计时心跳，同步写入 localStorage
+              localStorage.setItem(
+                "sync_close_auto_time",
+                String(request.value)
+              );
+
               if (request.value == 0) {
                 chrome.power.releaseKeepAwake();
                 // 3. 【核心修改点】监听到倒计时结束，同步更新 localStorage 状态
                 localStorage.setItem("sync_awake", "0");
                 localStorage.setItem("sync_disable", "0");
+                localStorage.setItem("sync_close_auto_time", "0"); // 归零
                 setCountDownSelect(0);
                 setAwake(false);
               }
@@ -182,6 +193,7 @@ function IndexPopup() {
                   // 5. 【核心修改点】手动切换时，同步写入 localStorage
                   localStorage.setItem("sync_awake", "0");
                   localStorage.setItem("sync_disable", "0");
+                  localStorage.setItem("sync_close_auto_time", "0"); // 【优化点】关闭时清空倒计时缓存
 
                   chrome.power.releaseKeepAwake();
                   await storage.setItem("awake", 0);
@@ -239,6 +251,7 @@ function IndexPopup() {
                 localStorage.setItem("sync_disable", String(e));
                 if (e == 0) {
                   setCloseAutoTime(0);
+                  localStorage.setItem("sync_close_auto_time", "0"); // 【优化点】手动切回 OFF 时清空缓存
                 }
                 if (awake == true) {
                   await storage.setItem("disable", e);
