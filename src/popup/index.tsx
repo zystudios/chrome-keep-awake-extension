@@ -1,7 +1,7 @@
 /*
  * @Author: zhangyan
  * @Date: 2025-08-23 20:35:53
- * @LastEditTime: 2026-06-30 22:35:33
+ * @LastEditTime: 2026-06-30 23:19:10
  * @LastEditors: zhangyan
  * @FilePath: /chrome-keep-awake-extension/src/popup/index.tsx
  * @Description:
@@ -210,7 +210,7 @@ function IndexPopup() {
             style={{
               fontSize: 14,
               fontWeight: 600,
-              marginTop: 10,
+              marginTop: 20,
               color: awake ? "#1abb6b" : "#ff4c50",
             }}
           >
@@ -218,13 +218,23 @@ function IndexPopup() {
               ? chrome.i18n.getMessage("enabled")
               : chrome.i18n.getMessage("disabled")}
           </div>
-          <div style={{ marginTop: 10, fontSize: 14 }}>
-            {chrome.i18n.getMessage("disableIn")}{" "}
+          <div
+            style={{
+              marginTop: 15,
+              fontSize: 14,
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+            }}
+          >
+            {chrome.i18n.getMessage("disableIn")}
             <Select
               size="small"
               listHeight={130}
               value={countDownSelect}
-              style={{ width: 90 }}
+              style={{ width: 85 }}
               options={[
                 { label: "OFF", value: 0 },
                 { label: "10 min", value: 10 },
@@ -264,8 +274,8 @@ function IndexPopup() {
           </div>
           <Alert
             style={{
-              marginTop: 10,
-              marginBottom: 30,
+              margin: "20px 10px 40px 10px",
+
               textAlign: "left", // 提示文字靠左对齐，阅读长句时比居中更舒服
               padding: "8px 12px", // 缩小 Alert 的内边距，挤出更多垂直空间
               wordBreak: "break-word", // 确保长单词或某些语言（如德语、俄语）能完美折行
