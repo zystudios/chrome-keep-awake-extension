@@ -9,7 +9,7 @@
   "disabled": { "message": "已禁用防止休眠" },
   "disableIn": { "message": "定時關閉" },
   "alertMessage": {
-    "message": "保持螢幕常亮將防止電腦關閉、鎖定或進入睡眠狀態。"
+    "message": "保持螢幕常亮將防止電腦關閉、鎖定或進入睡眠狀態"
   },
   "footerDisableIn": { "message": "定時關閉:" }
 }

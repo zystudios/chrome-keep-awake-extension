@@ -9,7 +9,7 @@
   "disabled": { "message": "Keep Awake Deaktiviert" },
   "disableIn": { "message": "Ausschalten in" },
   "alertMessage": {
-    "message": "Wenn der Bildschirm eingeschaltet bleibt, wird verhindert, dass der Computer heruntergefahren wird oder in den Ruhezustand wechselt."
+    "message": "Wenn der Bildschirm eingeschaltet bleibt, wird verhindert, dass der Computer heruntergefahren wird oder in den Ruhezustand wechselt"
   },
   "footerDisableIn": { "message": "Deaktivieren in:" }
 }

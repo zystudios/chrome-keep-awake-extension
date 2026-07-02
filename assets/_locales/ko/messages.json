@@ -9,7 +9,7 @@
   "disabled": { "message": "취침 방지 비활성화됨" },
   "disableIn": { "message": "종료 예약" },
   "alertMessage": {
-    "message": "화면을 켜두면 컴퓨터가 꺼지거나 절전 모드로 전환되는 것을 방지합니다."
+    "message": "화면을 켜두면 컴퓨터가 꺼지거나 절전 모드로 전환되는 것을 방지합니다"
   },
   "footerDisableIn": { "message": "종료 예약:" }
 }

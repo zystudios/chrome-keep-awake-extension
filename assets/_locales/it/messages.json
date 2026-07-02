@@ -9,7 +9,7 @@
   "disabled": { "message": "Keep Awake Disattivato" },
   "disableIn": { "message": "Disattiva tra" },
   "alertMessage": {
-    "message": "Mantenere lo schermo attivo impedirà al computer di spegnersi o di andare in sospensione."
+    "message": "Mantenere lo schermo attivo impedirà al computer di spegnersi o di andare in sospensione"
   },
   "footerDisableIn": { "message": "Disattiva tra:" }
 }
