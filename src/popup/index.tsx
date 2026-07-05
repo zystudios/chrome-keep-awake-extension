@@ -1,7 +1,7 @@
 /*
  * @Author: zhangyan
  * @Date: 2025-08-23 20:35:53
- * @LastEditTime: 2026-07-06 00:03:21
+ * @LastEditTime: 2026-07-06 00:17:24
  * @LastEditors: zhangyan
  * @FilePath: /chrome-keep-awake-extension/src/popup/index.tsx
  * @Description:
@@ -175,25 +175,51 @@ function IndexPopup() {
             }}
           >
             <Switch
-              // 【核心修改点】根据当前是否是初始化状态，动态赋予无动画类名
               className={isInit ? "popup-init-no-anime" : ""}
               value={awake}
               onChange={async (v) => {
                 if (v) {
+                  // 1. 激活 Chrome 原生屏幕常亮
                   chrome.power.requestKeepAwake("display");
+
+                  // 2. 清空前台下拉框选择（因为刚打开开关时默认是没有倒计时的全局常亮）
                   setCountDownSelect(0);
+
+                  // 3. 将最新状态写入全局共享的 storage
                   await storage.setItem("disable", 0);
                   await storage.setItem("awake", "1");
+
+                  // 4. 将扩展栏图标置为开启状态（ON）
                   await iconTxt(true);
+
+                  // 5. 【核心修改点】同步向后台发送最新状态，刷新后台内存变量
+                  chrome.runtime.sendMessage({
+                    type: "reset_time",
+                    awake: "1",
+                    disable: 0,
+                  });
                 } else {
+                  // 1. 释放 Chrome 屏幕常亮
                   chrome.power.releaseKeepAwake();
+
+                  // 2. 清空并还原前台所有倒计时状态
                   await storage.setItem("awake", "0");
                   await storage.setItem("disable", 0);
                   await storage.setItem("target_time", 0);
                   setCloseAutoTime(0);
                   setCountDownSelect(0);
+
+                  // 3. 将扩展栏图标置为关闭状态
                   await iconTxt(false);
+
+                  // 4. 【核心修改点】同步向后台发送关闭状态，清空后台内存变量
+                  chrome.runtime.sendMessage({
+                    type: "reset_time",
+                    awake: "0",
+                    disable: 0,
+                  });
                 }
+                // 5. 更新 React 状态触发 UI 渲染
                 setAwake(v);
               }}
             ></Switch>
@@ -229,7 +255,7 @@ function IndexPopup() {
               style={{ width: 85 }}
               options={[
                 { label: "OFF", value: 0 },
-                //{ label: "1 min", value: 1 },
+                { label: "1 min", value: 1 },
                 { label: "10 min", value: 10 },
                 { label: "20 min", value: 20 },
                 { label: "30 min", value: 30 },
@@ -249,27 +275,36 @@ function IndexPopup() {
                 { label: "12 h", value: 720 },
               ]}
               onChange={async (e) => {
+                // 1. 更新下拉框渲染状态
                 setCountDownSelect(e);
 
+                // 2. 预设下一个要同步给后台的常亮状态
+                let nextAwake = awake ? "1" : "0";
+
+                // 3. 如果用户主动选了 OFF (0)
                 if (e == 0) {
                   setCloseAutoTime(0);
-                  await storage.setItem("target_time", 0);
+                  await storage.setItem("target_time", 0); // 清除全局绝对截止时间戳
                 }
 
+                // 4. 【核心修复】只要选择的时间大于 0，且当前开关处于关闭状态，自动级联激活常亮
                 if (e > 0 && !awake) {
                   setAwake(true);
+                  nextAwake = "1";
                   chrome.power.requestKeepAwake("display");
                   await storage.setItem("awake", "1");
                   await iconTxt(true);
                 }
 
+                // 5. 将最新的倒计时选择分钟数持久化同步到全局 storage
                 await storage.setItem("disable", e);
 
-                if (awake || e > 0) {
-                  chrome.runtime.sendMessage({
-                    type: "reset_time",
-                  });
-                }
+                // 6. 【高性能重构】把最新的常亮开关状态和倒计时分钟数打包发送，被动刷新后台内存
+                chrome.runtime.sendMessage({
+                  type: "reset_time",
+                  awake: nextAwake,
+                  disable: e,
+                });
               }}
             ></Select>
           </div>
