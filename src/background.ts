@@ -1,7 +1,7 @@
 /*
  * @Author: zhangyan
  * @Date: 2023-11-15 19:48:54
- * @LastEditTime: 2026-07-06 00:42:28
+ * @LastEditTime: 2026-07-06 00:48:54
  * @LastEditors: zhangyan
  * @FilePath: /chrome-keep-awake-extension/src/background.ts
  * @Description: Keep Awake Extension Background Service Worker
