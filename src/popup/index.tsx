@@ -1,7 +1,7 @@
 /*
  * @Author: zhangyan
  * @Date: 2025-08-23 20:35:53
- * @LastEditTime: 2026-07-06 00:17:24
+ * @LastEditTime: 2026-07-06 00:20:24
  * @LastEditors: zhangyan
  * @FilePath: /chrome-keep-awake-extension/src/popup/index.tsx
  * @Description:
@@ -255,7 +255,10 @@ function IndexPopup() {
               style={{ width: 85 }}
               options={[
                 { label: "OFF", value: 0 },
-                { label: "1 min", value: 1 },
+                process.env.NODE_ENV == "development" && {
+                  label: "1 min",
+                  value: 1,
+                },
                 { label: "10 min", value: 10 },
                 { label: "20 min", value: 20 },
                 { label: "30 min", value: 30 },
