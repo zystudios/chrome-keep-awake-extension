@@ -38,7 +38,8 @@
     "default_locale": "en",
     "permissions": [
       "power",
-      "storage"
+      "storage",
+      "alarms"
     ]
   }
 }
