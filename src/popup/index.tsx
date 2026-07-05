@@ -1,7 +1,7 @@
 /*
  * @Author: zhangyan
  * @Date: 2025-08-23 20:35:53
- * @LastEditTime: 2026-07-05 23:53:48
+ * @LastEditTime: 2026-07-06 00:03:21
  * @LastEditors: zhangyan
  * @FilePath: /chrome-keep-awake-extension/src/popup/index.tsx
  * @Description:
@@ -26,6 +26,9 @@ function IndexPopup() {
     window.console.debug = (param: any) => {};
   }
 
+  // 【核心修改点】用来控制初始化是否关闭动画的状态
+  const [isInit, setIsInit] = useState(true);
+
   const [awake, setAwake] = useState(false);
   const [countDownSelect, setCountDownSelect] = useState(0);
   const [closeAutoTime, setCloseAutoTime] = useState(0);
@@ -48,7 +51,6 @@ function IndexPopup() {
     setBg(generateBg());
     const init = async () => {
       try {
-        // 全量改为从全局共享的 storage 中读取
         const status: string = (await storage.getItem("awake")) || "0";
         const disable: string = (await storage.getItem("disable")) || "0";
         const targetTimeStr: string =
@@ -61,7 +63,6 @@ function IndexPopup() {
           chrome.power.requestKeepAwake("display");
           await iconTxt(true);
 
-          // 基于绝对截止时间戳，瞬间算出最精准的剩余秒数，完全告别闪烁
           const targetTime = Number(targetTimeStr);
           if (targetTime > 0) {
             const remain = Math.max(
@@ -78,11 +79,13 @@ function IndexPopup() {
         }
       } catch {
       } finally {
+        setTimeout(() => {
+          setIsInit(false);
+        }, 50);
       }
     };
     init();
 
-    // 接收来自 background 的每秒脉冲更新
     const messageListener = (request: any) => {
       if (request.type === "count_down") {
         setCloseAutoTime(request.value);
@@ -172,6 +175,8 @@ function IndexPopup() {
             }}
           >
             <Switch
+              // 【核心修改点】根据当前是否是初始化状态，动态赋予无动画类名
+              className={isInit ? "popup-init-no-anime" : ""}
               value={awake}
               onChange={async (v) => {
                 if (v) {
@@ -224,6 +229,7 @@ function IndexPopup() {
               style={{ width: 85 }}
               options={[
                 { label: "OFF", value: 0 },
+                //{ label: "1 min", value: 1 },
                 { label: "10 min", value: 10 },
                 { label: "20 min", value: 20 },
                 { label: "30 min", value: 30 },
@@ -247,7 +253,7 @@ function IndexPopup() {
 
                 if (e == 0) {
                   setCloseAutoTime(0);
-                  await storage.setItem("target_time", 0); // 关闭倒计时则清除目标时间戳
+                  await storage.setItem("target_time", 0);
                 }
 
                 if (e > 0 && !awake) {
