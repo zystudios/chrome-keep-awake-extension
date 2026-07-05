@@ -1,10 +1,10 @@
 /*
  * @Author: zhangyan
  * @Date: 2025-08-23 20:35:53
- * @LastEditTime: 2026-07-06 00:20:24
+ * @LastEditTime: 2026-07-06 00:42:50
  * @LastEditors: zhangyan
  * @FilePath: /chrome-keep-awake-extension/src/popup/index.tsx
- * @Description:
+ * @Description: High-Performance Anti-Time-Cheating Popup
  */
 
 import { Alert, ConfigProvider, message, Select, Spin, Switch } from "antd";
@@ -26,7 +26,7 @@ function IndexPopup() {
     window.console.debug = (param: any) => {};
   }
 
-  // 【核心修改点】用来控制初始化是否关闭动画的状态
+  // 【優化點】用來控制初始化是否關閉動畫的狀態，防止開啟時滑塊抖動
   const [isInit, setIsInit] = useState(true);
 
   const [awake, setAwake] = useState(false);
@@ -53,8 +53,6 @@ function IndexPopup() {
       try {
         const status: string = (await storage.getItem("awake")) || "0";
         const disable: string = (await storage.getItem("disable")) || "0";
-        const targetTimeStr: string =
-          (await storage.getItem("target_time")) || "0";
 
         setCountDownSelect(Number(disable));
         setAwake(status == "1" ? true : false);
@@ -63,14 +61,16 @@ function IndexPopup() {
           chrome.power.requestKeepAwake("display");
           await iconTxt(true);
 
-          const targetTime = Number(targetTimeStr);
-          if (targetTime > 0) {
-            const remain = Math.max(
-              0,
-              Math.round((targetTime - Date.now()) / 1000)
-            );
-            setCloseAutoTime(remain);
-          }
+          // 【核心修復點】初始化時直接向後台記憶體索取最精準、不怕修改系統時間的剩餘秒數
+          // 瞬間對齊，完全解決時間倒退或介面閃爍問題
+          chrome.runtime.sendMessage(
+            { type: "get_current_remain" },
+            (response) => {
+              if (response && response.remain !== undefined) {
+                setCloseAutoTime(response.remain);
+              }
+            }
+          );
         } else {
           chrome.power.releaseKeepAwake();
           await iconTxt(false);
@@ -79,6 +79,7 @@ function IndexPopup() {
         }
       } catch {
       } finally {
+        // 延遲 50 毫秒恢復 Switch 動畫效果
         setTimeout(() => {
           setIsInit(false);
         }, 50);
@@ -86,6 +87,7 @@ function IndexPopup() {
     };
     init();
 
+    // 監聽後台每秒發來的倒數計時脈衝
     const messageListener = (request: any) => {
       if (request.type === "count_down") {
         setCloseAutoTime(request.value);
@@ -179,47 +181,39 @@ function IndexPopup() {
               value={awake}
               onChange={async (v) => {
                 if (v) {
-                  // 1. 激活 Chrome 原生屏幕常亮
+                  // 1. 啟動常亮
                   chrome.power.requestKeepAwake("display");
-
-                  // 2. 清空前台下拉框选择（因为刚打开开关时默认是没有倒计时的全局常亮）
                   setCountDownSelect(0);
 
-                  // 3. 将最新状态写入全局共享的 storage
+                  // 2. 更新全域 storage 磁碟數據
                   await storage.setItem("disable", 0);
                   await storage.setItem("awake", "1");
-
-                  // 4. 将扩展栏图标置为开启状态（ON）
                   await iconTxt(true);
 
-                  // 5. 【核心修改点】同步向后台发送最新状态，刷新后台内存变量
+                  // 3. 同步打包狀態通知後台被動更新記憶體變數
                   chrome.runtime.sendMessage({
                     type: "reset_time",
                     awake: "1",
                     disable: 0,
                   });
                 } else {
-                  // 1. 释放 Chrome 屏幕常亮
+                  // 1. 釋放常亮
                   chrome.power.releaseKeepAwake();
 
-                  // 2. 清空并还原前台所有倒计时状态
+                  // 2. 清空並還原前台所有狀態（徹底移除無用的 target_time 持久化）
                   await storage.setItem("awake", "0");
                   await storage.setItem("disable", 0);
-                  await storage.setItem("target_time", 0);
                   setCloseAutoTime(0);
                   setCountDownSelect(0);
-
-                  // 3. 将扩展栏图标置为关闭状态
                   await iconTxt(false);
 
-                  // 4. 【核心修改点】同步向后台发送关闭状态，清空后台内存变量
+                  // 3. 同步打包狀態通知後台記憶體變數關閉
                   chrome.runtime.sendMessage({
                     type: "reset_time",
                     awake: "0",
                     disable: 0,
                   });
                 }
-                // 5. 更新 React 状态触发 UI 渲染
                 setAwake(v);
               }}
             ></Switch>
@@ -253,30 +247,32 @@ function IndexPopup() {
               listHeight={130}
               value={countDownSelect}
               style={{ width: 85 }}
-              options={[
-                { label: "OFF", value: 0 },
-                process.env.NODE_ENV == "development" && {
-                  label: "1 min",
-                  value: 1,
-                },
-                { label: "10 min", value: 10 },
-                { label: "20 min", value: 20 },
-                { label: "30 min", value: 30 },
-                { label: "40 min", value: 40 },
-                { label: "50 min", value: 50 },
-                { label: "1 h", value: 60 },
-                { label: "2 h", value: 120 },
-                { label: "3 h", value: 180 },
-                { label: "4 h", value: 240 },
-                { label: "5 h", value: 300 },
-                { label: "6 h", value: 360 },
-                { label: "7 h", value: 420 },
-                { label: "8 h", value: 480 },
-                { label: "9 h", value: 540 },
-                { label: "10 h", value: 600 },
-                { label: "11 h", value: 660 },
-                { label: "12 h", value: 720 },
-              ]}
+              options={
+                [
+                  { label: "OFF", value: 0 },
+                  process.env.NODE_ENV == "development" && {
+                    label: "1 min",
+                    value: 1,
+                  },
+                  { label: "10 min", value: 10 },
+                  { label: "20 min", value: 20 },
+                  { label: "30 min", value: 30 },
+                  { label: "40 min", value: 40 },
+                  { label: "50 min", value: 50 },
+                  { label: "1 h", value: 60 },
+                  { label: "2 h", value: 120 },
+                  { label: "3 h", value: 180 },
+                  { label: "4 h", value: 240 },
+                  { label: "5 h", value: 300 },
+                  { label: "6 h", value: 360 },
+                  { label: "7 h", value: 420 },
+                  { label: "8 h", value: 480 },
+                  { label: "9 h", value: 540 },
+                  { label: "10 h", value: 600 },
+                  { label: "11 h", value: 660 },
+                  { label: "12 h", value: 720 },
+                ].filter(Boolean) as any
+              } // 过滤掉开发环境判断可能引入的 false 假值，确保生产环境稳定渲染
               onChange={async (e) => {
                 // 1. 更新下拉框渲染状态
                 setCountDownSelect(e);
@@ -287,10 +283,9 @@ function IndexPopup() {
                 // 3. 如果用户主动选了 OFF (0)
                 if (e == 0) {
                   setCloseAutoTime(0);
-                  await storage.setItem("target_time", 0); // 清除全局绝对截止时间戳
                 }
 
-                // 4. 【核心修复】只要选择的时间大于 0，且当前开关处于关闭状态，自动级联激活常亮
+                // 4. 只要选择的时间大于 0，且当前开关处于关闭状态，自动级联激活常亮
                 if (e > 0 && !awake) {
                   setAwake(true);
                   nextAwake = "1";
@@ -302,7 +297,7 @@ function IndexPopup() {
                 // 5. 将最新的倒计时选择分钟数持久化同步到全局 storage
                 await storage.setItem("disable", e);
 
-                // 6. 【高性能重构】把最新的常亮开关状态和倒计时分钟数打包发送，被动刷新后台内存
+                // 6. 把最新的常亮开关状态和倒计时分钟数打包发送，被动刷新后台内存
                 chrome.runtime.sendMessage({
                   type: "reset_time",
                   awake: nextAwake,
