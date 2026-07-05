@@ -1,7 +1,7 @@
 /*
  * @Author: zhangyan
  * @Date: 2025-08-23 20:35:53
- * @LastEditTime: 2026-06-30 23:21:09
+ * @LastEditTime: 2026-07-05 23:53:48
  * @LastEditors: zhangyan
  * @FilePath: /chrome-keep-awake-extension/src/popup/index.tsx
  * @Description:
@@ -26,20 +26,9 @@ function IndexPopup() {
     window.console.debug = (param: any) => {};
   }
 
-  const [loading, setLoading] = useState(false);
-
-  // 1. 【核心修改点】直接在 useState 里面通过同步的 localStorage 读取初始值，彻底杜绝闪烁和滑动动画
-  const [awake, setAwake] = useState(() => {
-    return localStorage.getItem("sync_awake") === "1";
-  });
-  const [countDownSelect, setCountDownSelect] = useState(() => {
-    return Number(localStorage.getItem("sync_disable")) || 0;
-  });
-
-  // 【优化点】同步读取上次记录的倒计时剩余时间，防止底部闪烁 "OFF"
-  const [closeAutoTime, setCloseAutoTime] = useState(() => {
-    return Number(localStorage.getItem("sync_close_auto_time")) || 0;
-  });
+  const [awake, setAwake] = useState(false);
+  const [countDownSelect, setCountDownSelect] = useState(0);
+  const [closeAutoTime, setCloseAutoTime] = useState(0);
 
   const [bg, setBg] = useState<any>("");
   const [messageApi, contextHolder] = message.useMessage({
@@ -59,48 +48,56 @@ function IndexPopup() {
     setBg(generateBg());
     const init = async () => {
       try {
+        // 全量改为从全局共享的 storage 中读取
         const status: string = (await storage.getItem("awake")) || "0";
         const disable: string = (await storage.getItem("disable")) || "0";
-
-        // 2. 【核心修改点】后台异步数据返回后，同步更新到 localStorage 镜像中
-        localStorage.setItem("sync_awake", status);
-        localStorage.setItem("sync_disable", disable);
+        const targetTimeStr: string =
+          (await storage.getItem("target_time")) || "0";
 
         setCountDownSelect(Number(disable));
         setAwake(status == "1" ? true : false);
+
         if (status == "1") {
           chrome.power.requestKeepAwake("display");
           await iconTxt(true);
+
+          // 基于绝对截止时间戳，瞬间算出最精准的剩余秒数，完全告别闪烁
+          const targetTime = Number(targetTimeStr);
+          if (targetTime > 0) {
+            const remain = Math.max(
+              0,
+              Math.round((targetTime - Date.now()) / 1000)
+            );
+            setCloseAutoTime(remain);
+          }
         } else {
           chrome.power.releaseKeepAwake();
           await iconTxt(false);
+          setCloseAutoTime(0);
+          setCountDownSelect(0);
         }
-
-        chrome.runtime.onMessage.addListener(
-          function (request, sender, sendResponse) {
-            if (request.type === "count_down") {
-              setCloseAutoTime(request.value);
-              // 【优化点】监听到后台倒计时心跳，同步写入 localStorage
-              localStorage.setItem(
-                "sync_close_auto_time",
-                String(request.value)
-              );
-
-              if (request.value == 0) {
-                chrome.power.releaseKeepAwake();
-                // 3. 【核心修改点】监听到倒计时结束，同步更新 localStorage 状态
-                localStorage.setItem("sync_awake", "0");
-                localStorage.setItem("sync_disable", "0");
-                localStorage.setItem("sync_close_auto_time", "0"); // 归零
-                setCountDownSelect(0);
-                setAwake(false);
-              }
-            }
-          }
-        );
-      } catch {}
+      } catch {
+      } finally {
+      }
     };
     init();
+
+    // 接收来自 background 的每秒脉冲更新
+    const messageListener = (request: any) => {
+      if (request.type === "count_down") {
+        setCloseAutoTime(request.value);
+
+        if (request.value == 0) {
+          chrome.power.releaseKeepAwake();
+          iconTxt(false);
+          setCountDownSelect(0);
+          setAwake(false);
+        }
+      }
+    };
+
+    chrome.runtime.onMessage.addListener(messageListener);
+    return () => chrome.runtime.onMessage.removeListener(messageListener);
   }, []);
 
   const randomNum = (min: number, max: number) => {
@@ -108,7 +105,7 @@ function IndexPopup() {
     const maxFloored = Math.floor(max);
     return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled);
   };
-  //radial-gradient(shape size at position, start-color, ..., last-color); hsla(hue, saturation, lightness, alpha)
+
   const generateBg = () => {
     return `radial-gradient(at ${randomNum(20, 40)}% ${randomNum(30, 80)}%, hsla(0, 100%, ${randomNum(70, 100)}%, 0.1) 0, hsla(114, 100%, 100%, 0) 40%),
             radial-gradient(at ${randomNum(50, 70)}% ${randomNum(30, 80)}%, hsla(201, 100%, ${randomNum(70, 100)}%, 0.1) 0, hsla(201, 100%, 100%, 0) 40%),        
@@ -135,8 +132,6 @@ function IndexPopup() {
 
   return (
     <div className="layout">
-      <Spin fullscreen spinning={loading} size="large"></Spin>
-
       <div
         className="content"
         style={{
@@ -180,24 +175,16 @@ function IndexPopup() {
               value={awake}
               onChange={async (v) => {
                 if (v) {
-                  // 4. 【核心修改点】手动切换时，同步写入 localStorage
-                  localStorage.setItem("sync_awake", "1");
-                  localStorage.setItem("sync_disable", "0");
-
                   chrome.power.requestKeepAwake("display");
                   setCountDownSelect(0);
                   await storage.setItem("disable", 0);
-                  await storage.setItem("awake", 1);
+                  await storage.setItem("awake", "1");
                   await iconTxt(true);
                 } else {
-                  // 5. 【核心修改点】手动切换时，同步写入 localStorage
-                  localStorage.setItem("sync_awake", "0");
-                  localStorage.setItem("sync_disable", "0");
-                  localStorage.setItem("sync_close_auto_time", "0"); // 【优化点】关闭时清空倒计时缓存
-
                   chrome.power.releaseKeepAwake();
-                  await storage.setItem("awake", 0);
+                  await storage.setItem("awake", "0");
                   await storage.setItem("disable", 0);
+                  await storage.setItem("target_time", 0);
                   setCloseAutoTime(0);
                   setCountDownSelect(0);
                   await iconTxt(false);
@@ -257,14 +244,22 @@ function IndexPopup() {
               ]}
               onChange={async (e) => {
                 setCountDownSelect(e);
-                // 6. 【核心修改点】下拉框更改时同步到 localStorage
-                localStorage.setItem("sync_disable", String(e));
+
                 if (e == 0) {
                   setCloseAutoTime(0);
-                  localStorage.setItem("sync_close_auto_time", "0"); // 【优化点】手动切回 OFF 时清空缓存
+                  await storage.setItem("target_time", 0); // 关闭倒计时则清除目标时间戳
                 }
-                if (awake == true) {
-                  await storage.setItem("disable", e);
+
+                if (e > 0 && !awake) {
+                  setAwake(true);
+                  chrome.power.requestKeepAwake("display");
+                  await storage.setItem("awake", "1");
+                  await iconTxt(true);
+                }
+
+                await storage.setItem("disable", e);
+
+                if (awake || e > 0) {
                   chrome.runtime.sendMessage({
                     type: "reset_time",
                   });
@@ -276,9 +271,9 @@ function IndexPopup() {
             style={{
               margin: "20px 5px 40px 5px",
 
-              textAlign: "left", // 提示文字靠左对齐，阅读长句时比居中更舒服
-              padding: "8px 12px", // 缩小 Alert 的内边距，挤出更多垂直空间
-              wordBreak: "break-word", // 确保长单词或某些语言（如德语、俄语）能完美折行
+              textAlign: "left",
+              padding: "8px 12px",
+              wordBreak: "break-word",
               maxHeight: 160,
               overflowY: "auto",
             }}
