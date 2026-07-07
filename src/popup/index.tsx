@@ -180,10 +180,16 @@ function IndexPopup() {
           <Progress
             type="dashboard"
             gapDegree={80}
-            percent={countDownSelect === 0 ? 100 : (closeAutoTime / (countDownSelect * 60)) * 100}
+            percent={
+              awake && closeAutoTime === 0
+                ? 100
+                : !awake
+                  ? 0
+                  : (closeAutoTime / (countDownSelect * 60)) * 100
+            }
             size={150}
             strokeWidth={8}
-            strokeColor={awake == false ? "#ff4c50" : "#1abb6b"}
+            strokeColor={awake == false ? "#eef0ee" : "#1abb6b"}
             format={() => (
               <div>
                 <div
@@ -357,12 +363,7 @@ function IndexPopup() {
         className="footer"
         style={{ display: "flex", justifyContent: "space-between" }}
       >
-        <div>
-          <ClockCircleOutlined />{" "}
-          <span style={{ color: "#1677ff" }}>
-            {closeAutoTime == 0 ? "OFF" : convertSeconds(closeAutoTime)}
-          </span>
-        </div>
+        <div></div>
         <div>v{appVerion}</div>
       </div>
 
