@@ -1,28 +1,19 @@
 /*
  * @Author: zhangyan
  * @Date: 2025-08-23 20:35:53
- * @LastEditTime: 2026-07-06 00:42:50
+ * @LastEditTime: 2026-07-07 21:34:10
  * @LastEditors: zhangyan
  * @FilePath: /chrome-keep-awake-extension/src/popup/index.tsx
  * @Description: High-Performance Anti-Time-Cheating Popup
  */
 
-import {
-  Alert,
-  ConfigProvider,
-  message,
-  Progress,
-  Select,
-  Spin,
-  Switch,
-} from "antd";
+import { Alert, ConfigProvider, message, Progress, Select, Switch } from "antd";
 import { useEffect, useState } from "react";
 
 import "./index.less";
 
 import { Storage } from "@plasmohq/storage";
 import { appVerion } from "~config";
-import { ClockCircleOutlined } from "@ant-design/icons";
 
 const storage = new Storage({ area: "local" });
 
@@ -77,7 +68,7 @@ function IndexPopup() {
               if (response && response.remain !== undefined) {
                 setCloseAutoTime(response.remain);
               }
-            },
+            }
           );
         } else {
           chrome.power.releaseKeepAwake();
