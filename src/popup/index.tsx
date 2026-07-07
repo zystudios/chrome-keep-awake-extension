@@ -7,7 +7,15 @@
  * @Description: High-Performance Anti-Time-Cheating Popup
  */
 
-import { Alert, ConfigProvider, message, Select, Spin, Switch } from "antd";
+import {
+  Alert,
+  ConfigProvider,
+  message,
+  Progress,
+  Select,
+  Spin,
+  Switch,
+} from "antd";
 import { useEffect, useState } from "react";
 
 import "./index.less";
@@ -69,7 +77,7 @@ function IndexPopup() {
               if (response && response.remain !== undefined) {
                 setCloseAutoTime(response.remain);
               }
-            }
+            },
           );
         } else {
           chrome.power.releaseKeepAwake();
@@ -169,60 +177,84 @@ function IndexPopup() {
 
         <></>
         <div style={{ textAlign: "center", marginTop: 10 }}>
-          <ConfigProvider
-            theme={{
-              token: {
-                colorPrimary: "#1abb6b",
-              },
-            }}
-          >
-            <Switch
-              className={isInit ? "popup-init-no-anime" : ""}
-              value={awake}
-              onChange={async (v) => {
-                if (v) {
-                  // 1. 啟動常亮
-                  chrome.power.requestKeepAwake("display");
-                  setCountDownSelect(0);
+          <Progress
+            type="dashboard"
+            gapDegree={80}
+            percent={countDownSelect === 0 ? 100 : (closeAutoTime / (countDownSelect * 60)) * 100}
+            size={150}
+            strokeWidth={8}
+            strokeColor={awake == false ? "#ff4c50" : "#1abb6b"}
+            format={() => (
+              <div>
+                <div
+                  style={{
+                    color: "#1677ff",
+                    fontSize: 20,
+                    fontWeight: 500,
+                    margin: "5px 0",
+                  }}
+                >
+                  {closeAutoTime == 0
+                    ? "00:00:00"
+                    : convertSeconds(closeAutoTime)}
+                </div>
+                <ConfigProvider
+                  theme={{
+                    token: {
+                      colorPrimary: "#1abb6b",
+                    },
+                  }}
+                >
+                  <Switch
+                    className={isInit ? "popup-init-no-anime" : ""}
+                    value={awake}
+                    onChange={async (v) => {
+                      if (v) {
+                        // 1. 啟動常亮
+                        chrome.power.requestKeepAwake("display");
+                        setCountDownSelect(0);
 
-                  // 2. 更新全域 storage 磁碟數據
-                  await storage.setItem("disable", 0);
-                  await storage.setItem("awake", "1");
-                  await iconTxt(true);
+                        // 2. 更新全域 storage 磁碟數據
+                        await storage.setItem("disable", 0);
+                        await storage.setItem("awake", "1");
+                        await iconTxt(true);
 
-                  // 3. 同步打包狀態通知後台被動更新記憶體變數
-                  chrome.runtime.sendMessage({
-                    type: "reset_time",
-                    awake: "1",
-                    disable: 0,
-                  });
-                } else {
-                  // 1. 釋放常亮
-                  chrome.power.releaseKeepAwake();
+                        // 3. 同步打包狀態通知後台被動更新記憶體變數
+                        chrome.runtime.sendMessage({
+                          type: "reset_time",
+                          awake: "1",
+                          disable: 0,
+                        });
+                      } else {
+                        // 1. 釋放常亮
+                        chrome.power.releaseKeepAwake();
 
-                  // 2. 清空並還原前台所有狀態（徹底移除無用的 target_time 持久化）
-                  await storage.setItem("awake", "0");
-                  await storage.setItem("disable", 0);
-                  setCloseAutoTime(0);
-                  setCountDownSelect(0);
-                  await iconTxt(false);
+                        // 2. 清空並還原前台所有狀態（徹底移除無用的 target_time 持久化）
+                        await storage.setItem("awake", "0");
+                        await storage.setItem("disable", 0);
+                        setCloseAutoTime(0);
+                        setCountDownSelect(0);
+                        await iconTxt(false);
 
-                  // 3. 同步打包狀態通知後台記憶體變數關閉
-                  chrome.runtime.sendMessage({
-                    type: "reset_time",
-                    awake: "0",
-                    disable: 0,
-                  });
-                }
-                setAwake(v);
-              }}
-            ></Switch>
-          </ConfigProvider>
+                        // 3. 同步打包狀態通知後台記憶體變數關閉
+                        chrome.runtime.sendMessage({
+                          type: "reset_time",
+                          awake: "0",
+                          disable: 0,
+                        });
+                      }
+                      setAwake(v);
+                    }}
+                  ></Switch>
+                </ConfigProvider>
+              </div>
+            )}
+          />
           <div
             style={{
               fontSize: 14,
               fontWeight: 600,
-              marginTop: 20,
+              marginTop: 0,
               color: awake ? "#1abb6b" : "#ff4c50",
             }}
           >
