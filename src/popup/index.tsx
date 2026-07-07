@@ -282,7 +282,7 @@ function IndexPopup() {
             {chrome.i18n.getMessage("disableIn")}
             <Select
               size="small"
-              listHeight={130}
+              listHeight={160}
               value={countDownSelect}
               style={{ width: 85 }}
               options={
@@ -298,16 +298,27 @@ function IndexPopup() {
                   { label: "40 min", value: 40 },
                   { label: "50 min", value: 50 },
                   { label: "1 h", value: 60 },
+                  { label: "1.5 h", value: 90 },
                   { label: "2 h", value: 120 },
+                  { label: "2.5 h", value: 150 },
                   { label: "3 h", value: 180 },
+                  { label: "3.5 h", value: 210 },
                   { label: "4 h", value: 240 },
+                  { label: "4.5 h", value: 270 },
                   { label: "5 h", value: 300 },
+                  { label: "5.5 h", value: 330 },
                   { label: "6 h", value: 360 },
+                  { label: "6.5 h", value: 390 },
                   { label: "7 h", value: 420 },
+                  { label: "7.5 h", value: 450 },
                   { label: "8 h", value: 480 },
+                  { label: "8.5 h", value: 510 },
                   { label: "9 h", value: 540 },
+                  { label: "9.5 h", value: 570 },
                   { label: "10 h", value: 600 },
+                  { label: "10.5 h", value: 630 },
                   { label: "11 h", value: 660 },
+                  { label: "11.5 h", value: 690 },
                   { label: "12 h", value: 720 },
                 ].filter(Boolean) as any
               } // 过滤掉开发环境判断可能引入的 false 假值，确保生产环境稳定渲染
