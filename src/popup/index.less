@@ -117,3 +117,15 @@ svg {
     transition: none !important;
   }
 }
+
+/* 所有虚拟滚动条，包括div span等的滚动条，滑块宽度最小*/
+.rc-virtual-list-scrollbar {
+  width: 5px !important;
+}
+* {
+  scrollbar-width: thin !important;
+}
+
+*::-webkit-scrollbar {
+  width: 5px !important;
+}
