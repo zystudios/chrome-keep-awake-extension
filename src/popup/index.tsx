@@ -111,9 +111,9 @@ function IndexPopup() {
   };
 
   const generateBg = () => {
-    return `radial-gradient(at ${randomNum(20, 40)}% ${randomNum(30, 80)}%, hsla(0, 100%, ${randomNum(70, 100)}%, 0.1) 0, hsla(114, 100%, 100%, 0) 40%),
-            radial-gradient(at ${randomNum(50, 70)}% ${randomNum(30, 80)}%, hsla(201, 100%, ${randomNum(70, 100)}%, 0.1) 0, hsla(201, 100%, 100%, 0) 40%),        
-            radial-gradient(at ${randomNum(70, 100)}% ${randomNum(30, 80)}%, hsla(112, 100%, ${randomNum(70, 100)}%, 0.1) 0, hsla(112, 100%, 100%, 0) 40%)
+    return `radial-gradient(at ${randomNum(20, 40)}% ${randomNum(30, 80)}%, hsla(0, 100%, ${randomNum(70, 100)}%, 0.15) 0, hsla(114, 100%, 100%, 0) 40%),
+            radial-gradient(at ${randomNum(50, 70)}% ${randomNum(30, 80)}%, hsla(201, 100%, ${randomNum(70, 100)}%, 0.15) 0, hsla(201, 100%, 100%, 0) 40%),        
+            radial-gradient(at ${randomNum(70, 100)}% ${randomNum(30, 80)}%, hsla(112, 100%, ${randomNum(70, 100)}%, 0.15) 0, hsla(112, 100%, 100%, 0) 40%)
             `;
   };
 
@@ -150,7 +150,7 @@ function IndexPopup() {
           backgroundImage: bg,
         }}
       >
-        <div
+        {/* <div
           style={{
             display: "flex",
             alignItems: "center",
@@ -171,7 +171,7 @@ function IndexPopup() {
           >
             Keep Awake
           </span>
-        </div>
+        </div> */}
 
         <></>
         <div style={{ textAlign: "center", marginTop: 10 }}>
@@ -414,7 +414,34 @@ function IndexPopup() {
         className="footer"
         style={{ display: "flex", justifyContent: "space-between" }}
       >
-        <div></div>
+        <div
+          style={{
+            display: "inline-flex", // 💡 改為 inline-flex，更適合導航列或標題的緊湊對齊
+            alignItems: "center", // 💡 確保 flex 子項垂直居中
+            justifyContent: "center", // 💡 確保水平居中
+            gap: "6px", // 稍微拉開一點圖標與文字的間距，視覺更和諧
+            height: "24px", // 💡 固定的高度可以給內部元素一個精準的對齊基準線
+          }}
+        >
+          <img
+            width={16}
+            height={16} // 💡 明確限制高度，防止圖片比例拉伸
+            src={require("data-base64:../../assets/icon.png")}
+            style={{
+              display: "block",
+              flexShrink: 0, // 💡 防止圖片在小容器中被擠壓變形
+            }}
+          />
+          <span
+            style={{
+              fontSize: "14px", // 根據你的設計調整字號
+              lineHeight: "16px", // 💡 極其重要：將文字行高設定為與圖片高度（16px）完全一致，徹底根治「底部對齊」的頑疾
+              display: "inline-block",
+            }}
+          >
+            Keep Awake
+          </span>
+        </div>
         <div>v{appVerion}</div>
       </div>
 
