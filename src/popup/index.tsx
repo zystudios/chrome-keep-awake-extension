@@ -181,7 +181,7 @@ function IndexPopup() {
                     ? 100
                     : (closeAutoTime / (countDownSelect * 60)) * 100
             }
-            size={150}
+            size={155}
             strokeWidth={9}
             strokeLinecap="butt"
             strokeColor={
@@ -198,16 +198,40 @@ function IndexPopup() {
               <div>
                 <div
                   style={{
+                    display: "flex",
+                    justifyContent: "center", // 💡 核心修正：讓整串倒計時數字在網頁上「水平居中」
+                    alignItems: "center", // 💡 核心修正：讓數字和冒號在「上下垂直居中」對齊
                     color: "#1677ff",
                     fontSize: 20,
                     fontWeight: 500,
                     marginTop: "10px",
                     fontVariantNumeric: "tabular-nums",
+                    width: "100%", // 確保佔滿父容器寬度，以便完美居中
                   }}
                 >
-                  {closeAutoTime == 0
+                  {(closeAutoTime === 0
                     ? "00:00:00"
-                    : convertSeconds(closeAutoTime)}
+                    : convertSeconds(closeAutoTime)
+                  )
+                    .split("")
+                    .map((char, index) => {
+                      const isColon = char === ":" || char === "：";
+                      return (
+                        <span
+                          key={index}
+                          style={{
+                            fontFamily: isColon ? "Courier" : '"digitNum"',
+                            width: isColon ? "10px" : "12px",
+                            textAlign: "center", // 💡 確保每個單獨的數字在自己的格子裡水平居中
+                            display: "inline-block",
+                            // 💡 如果你發現冒號偏上或偏下，可以透過微調下面這行 lineHegiht 或 padding 來微調上下對齊：
+                            lineHeight: "20px",
+                          }}
+                        >
+                          {char}
+                        </span>
+                      );
+                    })}
                 </div>
                 <ConfigProvider
                   theme={{
