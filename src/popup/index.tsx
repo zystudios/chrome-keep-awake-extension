@@ -180,7 +180,16 @@ function IndexPopup() {
             }
             size={150}
             strokeWidth={9}
-            strokeColor={awake == false ? "#eef0ee" : "#1abb6b"}
+            strokeLinecap="butt"
+            strokeColor={
+              awake == false
+                ? "#eef0ee"
+                : {
+                    "0%": "#ff6b6b", // 柔和珊瑚红
+                    "60%": "#ffd166", // 温暖浅金黄（往后挪到60%，压缩黄绿过渡区间）
+                    "100%": "#06d6a0", // 梦幻薄荷绿（避开死绿）
+                  }
+            }
             format={() => (
               <div>
                 <div
