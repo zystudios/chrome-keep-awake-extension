@@ -5,11 +5,19 @@
   "extDesc": {
     "message": "Bildschirmschoner und Ruhemodus deaktivieren: Hält den Monitor dauerhaft eingeschaltet"
   },
-  "enabled": { "message": "Keep Awake Aktiviert" },
-  "disabled": { "message": "Keep Awake Deaktiviert" },
-  "disableIn": { "message": "Ausschalten in" },
-  "alertMessage": {
-    "message": "Wenn der Bildschirm eingeschaltet bleibt, wird verhindert, dass der Computer heruntergefahren wird oder in den Ruhezustand wechselt"
+  "enabled": {
+    "message": "Keep Awake Aktiviert"
   },
-  "footerDisableIn": { "message": "Deaktivieren in:" }
+  "disabled": {
+    "message": "Keep Awake Deaktiviert"
+  },
+  "disableIn": {
+    "message": "Ausschalten in"
+  },
+  "alertMessage": {
+    "message": "Bildschirm aktiv halten verhindert Ruhezustand oder Ausschalten"
+  },
+  "footerDisableIn": {
+    "message": "Deaktivieren in:"
+  }
 }

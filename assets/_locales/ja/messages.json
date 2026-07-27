@@ -5,11 +5,19 @@
   "extDesc": {
     "message": "画面の常時点灯を維持し、コンピューターのシャットダウンやスリープを防止します"
   },
-  "enabled": { "message": "スリープ防止 有効" },
-  "disabled": { "message": "スリープ防止 無効" },
-  "disableIn": { "message": "解除まで" },
-  "alertMessage": {
-    "message": "画面を常時点灯のままにすることで、コンピューターの電源が切れたり、スリープ状態になったりするのを防ぎます"
+  "enabled": {
+    "message": "スリープ防止 有効"
   },
-  "footerDisableIn": { "message": "解除まで:" }
+  "disabled": {
+    "message": "スリープ防止 無効"
+  },
+  "disableIn": {
+    "message": "解除まで"
+  },
+  "alertMessage": {
+    "message": "画面を常時点灯にすると、シャットダウンやスリープを防げます"
+  },
+  "footerDisableIn": {
+    "message": "解除まで:"
+  }
 }

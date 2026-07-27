@@ -5,11 +5,19 @@
   "extDesc": {
     "message": "Поддержание экрана в активном состоянии предотвращает выключение компьютера или его переход в спящий режим"
   },
-  "enabled": { "message": "Keep Awake Включено" },
-  "disabled": { "message": "Keep Awake Выключено" },
-  "disableIn": { "message": "Отключить через" },
-  "alertMessage": {
-    "message": "Поддержание экрана в активном состоянии предотвратит выключение компьютера или его переход в спящий режим"
+  "enabled": {
+    "message": "Keep Awake Включено"
   },
-  "footerDisableIn": { "message": "Отключить через:" }
+  "disabled": {
+    "message": "Keep Awake Выключено"
+  },
+  "disableIn": {
+    "message": "Отключить через"
+  },
+  "alertMessage": {
+    "message": "Активный экран предотвращает выключение или сон"
+  },
+  "footerDisableIn": {
+    "message": "Отключить через:"
+  }
 }

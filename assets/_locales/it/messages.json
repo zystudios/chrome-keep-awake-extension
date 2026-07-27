@@ -5,11 +5,19 @@
   "extDesc": {
     "message": "Mantenere lo schermo attivo impedisce al computer di spegnersi o di andare in sospensione"
   },
-  "enabled": { "message": "Keep Awake Attivato" },
-  "disabled": { "message": "Keep Awake Disattivato" },
-  "disableIn": { "message": "Disattiva tra" },
-  "alertMessage": {
-    "message": "Mantenere lo schermo attivo impedirà al computer di spegnersi o di andare in sospensione"
+  "enabled": {
+    "message": "Keep Awake Attivato"
   },
-  "footerDisableIn": { "message": "Disattiva tra:" }
+  "disabled": {
+    "message": "Keep Awake Disattivato"
+  },
+  "disableIn": {
+    "message": "Disattiva tra"
+  },
+  "alertMessage": {
+    "message": "Schermo attivo previene lo spegnimento o la sospensione"
+  },
+  "footerDisableIn": {
+    "message": "Disattiva tra:"
+  }
 }

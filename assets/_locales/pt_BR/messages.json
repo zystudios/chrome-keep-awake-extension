@@ -5,11 +5,19 @@
   "extDesc": {
     "message": "Manter a tela ativa evita que o computador desligue ou entre no modo de suspensão"
   },
-  "enabled": { "message": "Keep Awake Ativado" },
-  "disabled": { "message": "Keep Awake Desativado" },
-  "disableIn": { "message": "Desativar em" },
-  "alertMessage": {
-    "message": "Manter a tela ativa impedirá que o computador desligue ou entre em modo de suspensão"
+  "enabled": {
+    "message": "Keep Awake Ativado"
   },
-  "footerDisableIn": { "message": "Desativar em:" }
+  "disabled": {
+    "message": "Keep Awake Desativado"
+  },
+  "disableIn": {
+    "message": "Desativar em"
+  },
+  "alertMessage": {
+    "message": "Manter a tela ativa evita o desligamento ou a suspensão"
+  },
+  "footerDisableIn": {
+    "message": "Desativar em:"
+  }
 }
