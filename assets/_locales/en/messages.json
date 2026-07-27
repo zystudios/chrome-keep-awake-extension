@@ -5,11 +5,19 @@
   "extDesc": {
     "message": "Keeping the screen awake will prevent the computer from turning off or going to sleep"
   },
-  "enabled": { "message": "Keep Awake Enabled" },
-  "disabled": { "message": "Keep Awake Disabled" },
-  "disableIn": { "message": "Disable In" },
-  "alertMessage": {
-    "message": "Keeping the screen awake will prevent the computer from turning off or going to sleep"
+  "enabled": {
+    "message": "Keep Awake Enabled"
   },
-  "footerDisableIn": { "message": "Disable In:" }
+  "disabled": {
+    "message": "Keep Awake Disabled"
+  },
+  "disableIn": {
+    "message": "Disable In"
+  },
+  "alertMessage": {
+    "message": "Keeping the screen awake prevents sleep or shutdown"
+  },
+  "footerDisableIn": {
+    "message": "Disable In:"
+  }
 }
