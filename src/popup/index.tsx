@@ -176,7 +176,10 @@ function IndexPopup() {
                 ? 100
                 : !awake
                   ? 0
-                  : (closeAutoTime / (countDownSelect * 60)) * 100
+                  : // ✨【终极优雅修复】：如果当前倒计时秒数跟刚刚选择的总时间对不上（代表正在切换的瞬间），直接强制 100%
+                    closeAutoTime >= countDownSelect * 60
+                    ? 100
+                    : (closeAutoTime / (countDownSelect * 60)) * 100
             }
             size={150}
             strokeWidth={9}
@@ -185,9 +188,10 @@ function IndexPopup() {
               awake == false
                 ? "#eef0ee"
                 : {
-                    "0%": "#ff6b6b", // 柔和珊瑚红
-                    "60%": "#ffd166", // 温暖浅金黄（往后挪到60%，压缩黄绿过渡区间）
-                    "100%": "#06d6a0", // 梦幻薄荷绿（避开死绿）
+                    "0%": "#ff6b6b", // 🟥 红色起点
+                    "25%": "#ffd166", // 🟨 黄色断点（红黄区间占 25%）
+                    "50%": "#06d6a0", // 🟩 绿色起点（黄绿过渡占 25%）
+                    "100%": "#06d6a0", // 🟩 绿色终点（后半段 50% 全部保持纯绿色）
                   }
             }
             format={() => (
@@ -329,12 +333,15 @@ function IndexPopup() {
                 setCountDownSelect(e);
 
                 // 2. 预设下一个要同步给后台的常亮状态
-                let nextAwake = awake ? "1" : "0";
 
                 // 3. 如果用户主动选了 OFF (0)
-                if (e == 0) {
+                if (e > 0) {
+                  setCloseAutoTime(e * 60); // 比如选了 60 分钟，立刻前台设为 3600 秒，这样百分比瞬间就是 3600/3600 = 100%
+                } else {
                   setCloseAutoTime(0);
                 }
+
+                let nextAwake = awake ? "1" : "0";
 
                 // 4. 只要选择的时间大于 0，且当前开关处于关闭状态，自动级联激活常亮
                 if (e > 0 && !awake) {
