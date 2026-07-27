@@ -68,7 +68,7 @@ function IndexPopup() {
               if (response && response.remain !== undefined) {
                 setCloseAutoTime(response.remain);
               }
-            }
+            },
           );
         } else {
           chrome.power.releaseKeepAwake();
@@ -179,7 +179,7 @@ function IndexPopup() {
                   : (closeAutoTime / (countDownSelect * 60)) * 100
             }
             size={150}
-            strokeWidth={8}
+            strokeWidth={9}
             strokeColor={awake == false ? "#eef0ee" : "#1abb6b"}
             format={() => (
               <div>
@@ -188,7 +188,8 @@ function IndexPopup() {
                     color: "#1677ff",
                     fontSize: 20,
                     fontWeight: 500,
-                    margin: "5px 0",
+                    marginTop: "10px",
+                    fontVariantNumeric: "tabular-nums",
                   }}
                 >
                   {closeAutoTime == 0
@@ -203,6 +204,7 @@ function IndexPopup() {
                   }}
                 >
                   <Switch
+                    style={{ marginTop: 20 }}
                     className={isInit ? "popup-init-no-anime" : ""}
                     value={awake}
                     onChange={async (v) => {
