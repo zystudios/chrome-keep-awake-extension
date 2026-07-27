@@ -1,7 +1,7 @@
 /*
  * @Author: zhangyan
  * @Date: 2025-08-23 20:35:53
- * @LastEditTime: 2026-07-07 21:34:10
+ * @LastEditTime: 2026-07-27 20:20:03
  * @LastEditors: zhangyan
  * @FilePath: /chrome-keep-awake-extension/src/popup/index.tsx
  * @Description: High-Performance Anti-Time-Cheating Popup
@@ -68,7 +68,7 @@ function IndexPopup() {
               if (response && response.remain !== undefined) {
                 setCloseAutoTime(response.remain);
               }
-            },
+            }
           );
         } else {
           chrome.power.releaseKeepAwake();
@@ -227,7 +227,7 @@ function IndexPopup() {
                         <span
                           key={index}
                           style={{
-                            fontFamily: isColon ? "Courier" : '"digitNum"',
+                            fontFamily: isColon ? "math,Courier" : '"digitNum"',
                             width: isColon ? "10px" : "12px",
                             textAlign: "center", // 💡 確保每個單獨的數字在自己的格子裡水平居中
                             display: "inline-block",
