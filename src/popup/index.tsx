@@ -210,7 +210,7 @@ function IndexPopup() {
                     justifyContent: "center", // 💡 核心修正：讓整串倒計時數字在網頁上「水平居中」
                     alignItems: "center", // 💡 核心修正：讓數字和冒號在「上下垂直居中」對齊
                     color: "#1677ff",
-                    fontSize: 20,
+                    fontSize: 18,
                     fontWeight: 700,
                     letterSpacing: -1,
                     marginTop: "10px",
