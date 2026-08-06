@@ -1,7 +1,7 @@
 /*
  * @Author: zhangyan
  * @Date: 2023-11-15 19:48:54
- * @LastEditTime: 2026-07-06 00:55:21
+ * @LastEditTime: 2026-08-06 20:21:02
  * @LastEditors: zhangyan
  * @FilePath: /chrome-keep-awake-extension/src/background.ts
  * @Description: Ultimate High-Performance Anti-Eviction Background (Chrome Alarms Version)
